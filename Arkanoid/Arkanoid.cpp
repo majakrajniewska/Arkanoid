@@ -1,16 +1,16 @@
 ﻿#include <SFML/Graphics.hpp>
+#include "Ball.h"
+#include "Bar.h"
 
 int main()
 {
+    srand(time(0));
     unsigned int SCREEN_HEIGHT = 900;
     unsigned int SCREEN_WIDTH = 900;
     sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "ARKANOID");
-    sf::CircleShape ball(30.f);
-    ball.setFillColor(sf::Color::Green);
-    ball.setOrigin(ball.getGeometricCenter());
-    ball.setPosition({ SCREEN_WIDTH / 2.f, SCREEN_HEIGHT / 2.f });
-
-    sf::Vector2f velocity = { 5.f, 4.f };
+    
+    Ball ball(30.f, SCREEN_WIDTH, SCREEN_HEIGHT);
+    Bar bar(150.f, 30.f, 10.f, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     window->setFramerateLimit(60);
 
@@ -26,21 +26,19 @@ int main()
                 //Escape
                 if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
                     window->close();
+                //A
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::A)
+                    bar.update(*window, -1);
+                //D
+                else if (keyPressed->scancode == sf::Keyboard::Scancode::D)
+                    bar.update(*window, 1);
             }
         }
+        ball.update(*window, bar);
 
-        ball.move(velocity);
-        sf::FloatRect ballBounds = ball.getGlobalBounds();
-
-        // Check collision with window bounds
-        if (ballBounds.position.x <= 0 || ballBounds.position.x + ballBounds.size.x >= window->getSize().x) {
-            velocity.x = -velocity.x; // Reverse horizontal direction
-        }
-        if (ballBounds.position.y <= 0 || ballBounds.position.y + ballBounds.size.y >= window->getSize().y) {
-            velocity.y = -velocity.y; // Reverse vertical direction
-        }
         window->clear();
-        window->draw(ball);
+        ball.draw(*window);
+        bar.draw(*window);
         window->display();
     }
 }

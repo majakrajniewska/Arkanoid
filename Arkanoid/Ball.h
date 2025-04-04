@@ -1,10 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include "Bar.h"
+#include "Block.h"
+
 class Ball
 {
 public:
 	Ball(float radius, unsigned int SCREEN_W, unsigned int SCREEN_H);
-	void update(const sf::RenderWindow& window, const Bar& bar);
+	void update(const sf::RenderWindow& window, const Bar& bar, std::vector<Block*>& blocks);
 	void draw(sf::RenderWindow& window) const;
 
 private:
@@ -12,6 +14,8 @@ private:
 	sf::Vector2f velocity;
 	sf::Vector2f startPosition;
 
-	void checkCollision(const sf::RenderWindow& window, const Bar& bar);
+	void checkCollision(const sf::RenderWindow& window, const Bar& bar, std::vector<Block*>& blocks);
+	void bounceX();
+	void bounceY();
 };
 

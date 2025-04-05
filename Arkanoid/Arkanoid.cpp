@@ -10,8 +10,8 @@ int main()
     unsigned int SCREEN_WIDTH = 900;
     sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "ARKANOID");
     
-    Ball ball(30.f, SCREEN_WIDTH, SCREEN_HEIGHT);
-    Bar bar(150.f, 30.f, 10.f, SCREEN_WIDTH, SCREEN_HEIGHT);
+    Ball ball(25.f, SCREEN_WIDTH, SCREEN_HEIGHT);
+    Bar bar(170.f, 30.f, 8.f, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     //Map
     std::vector<std::vector<int>> map = {
@@ -36,6 +36,15 @@ int main()
 
     while (window->isOpen())
     {
+        // Real-time movement (no delay when holding keys)
+        //A pressed
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::A)) {
+            bar.update(*window, -1.f);
+        }
+        //D pressed
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::D)) {
+            bar.update(*window, 1.f);
+        }
         while (const std::optional event = window->pollEvent())
         {
             //Close window
@@ -46,12 +55,6 @@ int main()
                 //Escape
                 if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
                     window->close();
-                //A
-                else if (keyPressed->scancode == sf::Keyboard::Scancode::A)
-                    bar.update(*window, -1);
-                //D
-                else if (keyPressed->scancode == sf::Keyboard::Scancode::D)
-                    bar.update(*window, 1);
             }
         }
         ball.update(*window, bar, blocks);

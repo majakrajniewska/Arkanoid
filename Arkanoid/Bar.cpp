@@ -1,11 +1,10 @@
 #include "Bar.h"
 
-Bar::Bar(float width, float height, float newSpeed, unsigned int SCREEN_W, unsigned int SCREEN_H){
+Bar::Bar(float width, float height, float speed, unsigned int SCREEN_W, unsigned int SCREEN_H) 
+	: speed(speed){
 	shape.setSize({ width, height });
 	shape.setFillColor(sf::Color::Cyan);
 	shape.setPosition({ SCREEN_W / 2.f, SCREEN_H - SCREEN_H / 5.f });
-
-	speed = newSpeed;
 }
 
 void Bar::update(const sf::RenderWindow& window, float direction) {

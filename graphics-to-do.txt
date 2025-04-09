@@ -1,0 +1,8 @@
+gameplay
+	- background - with square border for game
+	- blocks - 3 lvls
+	- pad with Chuck Norris
+	- fire ball
+menu
+	- background 
+	- buttons without text

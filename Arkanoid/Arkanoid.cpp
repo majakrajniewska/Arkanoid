@@ -59,7 +59,7 @@ int main()
         }
         ball.update(*window, bar, blocks);
 
-        window->clear();
+        //window->clear();
         ball.draw(*window);
         bar.draw(*window);
         for(Block *b : blocks) {

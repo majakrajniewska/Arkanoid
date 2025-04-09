@@ -17,12 +17,12 @@ void Ball::bounceY()
 {
 	velocity.y = -velocity.y;
 }
-void Ball::update(const sf::RenderWindow& window, const Bar& bar, std::vector<Block*>& blocks) {
+void Ball::update(const sf::RenderWindow& window, const Bumper& bumper, std::vector<Block*>& blocks) {
 	shape.move(velocity);
-	checkCollision(window, bar, blocks);
+	checkCollision(window, bumper, blocks);
 }
 
-void Ball::checkCollision(const sf::RenderWindow& window, const Bar& bar, std::vector<Block*>& blocks) {
+void Ball::checkCollision(const sf::RenderWindow& window, const Bumper& bumper, std::vector<Block*>& blocks) {
 	sf::FloatRect ballBounds = shape.getGlobalBounds();
 
 	// Check collision with window bounds
@@ -33,8 +33,8 @@ void Ball::checkCollision(const sf::RenderWindow& window, const Bar& bar, std::v
 		bounceY();
 	}
 
-	//check collision with the bar
-	if (ballBounds.findIntersection(bar.getBounds())) {
+	//check collision with the Bumper
+	if (ballBounds.findIntersection(bumper.getBounds())) {
 		velocity.y = -velocity.y;
 	}
 

@@ -1,6 +1,6 @@
 ﻿#include <SFML/Graphics.hpp>
 #include "Ball.h"
-#include "Bar.h"
+#include "Bumper.h"
 #include "Block.h"
 
 int main()
@@ -11,7 +11,7 @@ int main()
     sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "ARKANOID");
     
     Ball ball(25.f, SCREEN_WIDTH, SCREEN_HEIGHT);
-    Bar bar(170.f, 30.f, 8.f, SCREEN_WIDTH, SCREEN_HEIGHT);
+    Bumper bumper(170.f, 30.f, 8.f, SCREEN_WIDTH, SCREEN_HEIGHT);
 
     //Map
     std::vector<std::vector<int>> map = {
@@ -39,11 +39,11 @@ int main()
         // Real-time movement (no delay when holding keys)
         //A pressed
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::A)) {
-            bar.update(*window, -1.f);
+            bumper.update(*window, -1.f);
         }
         //D pressed
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::D)) {
-            bar.update(*window, 1.f);
+            bumper.update(*window, 1.f);
         }
         while (const std::optional event = window->pollEvent())
         {
@@ -57,11 +57,12 @@ int main()
                     window->close();
             }
         }
-        ball.update(*window, bar, blocks);
+        ball.update(*window, bumper, blocks);
 
-        //window->clear();
+        window->clear();
         ball.draw(*window);
-        bar.draw(*window);
+        bumper.draw(*window);
+        bumper.draw(*window);
         for(Block *b : blocks) {
             b->draw(*window);
         }

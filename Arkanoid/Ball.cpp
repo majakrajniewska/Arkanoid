@@ -3,7 +3,7 @@
 
 Ball::Ball(float radius, unsigned int SCREEN_W, unsigned int SCREEN_H) {
 	shape.setRadius(radius);
-	shape.setFillColor(sf::Color::Magenta);
+	shape.setFillColor(sf::Color::Red);
 	startPosition = { SCREEN_W / 2.f, SCREEN_H / 2.f };
 	shape.setPosition(startPosition);
 	velocity = { -5.f, -4.f};

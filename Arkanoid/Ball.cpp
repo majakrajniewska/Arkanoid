@@ -4,9 +4,10 @@
 Ball::Ball(float radius, unsigned int SCREEN_W, unsigned int SCREEN_H) {
 	shape.setRadius(radius);
 	shape.setFillColor(sf::Color::Magenta);
-	startPosition = { SCREEN_W / 2.f, SCREEN_H / 2.f };
-	shape.setPosition(startPosition);
-	velocity = { -5.f, -4.f};
+	startPosition = { SCREEN_W / 2.f, SCREEN_H - SCREEN_H / 3.f };
+    shape.setPosition(startPosition);
+    velocity = {4.f, -5.f};
+    lives = 3;
 }
 void Ball::bounceX()
 {
@@ -17,12 +18,13 @@ void Ball::bounceY()
 {
 	velocity.y = -velocity.y;
 }
-void Ball::update(const sf::RenderWindow& window, const Bumper& bumper, std::vector<Block*>& blocks) {
+
+void Ball::update(sf::RenderWindow& window, const Bumper& bumper, std::vector<Block*>& blocks) {
 	shape.move(velocity);
 	checkCollision(window, bumper, blocks);
 }
 
-void Ball::checkCollision(const sf::RenderWindow& window, const Bumper& bumper, std::vector<Block*>& blocks) {
+void Ball::checkCollision(sf::RenderWindow& window, const Bumper& bumper, std::vector<Block*>& blocks) {
 	sf::FloatRect ballBounds = shape.getGlobalBounds();
 
 	// Check collision with window bounds
@@ -30,12 +32,22 @@ void Ball::checkCollision(const sf::RenderWindow& window, const Bumper& bumper, 
 		bounceX();
 	}
 	if (ballBounds.position.y <= 0 || ballBounds.position.y + ballBounds.size.y >= window.getSize().y) {
+        if (ballBounds.position.y + ballBounds.size.y >= window.getSize().y) {
+            lives--;
+            shape.setPosition(startPosition);
+            if (lives == 0) {
+                window.close();
+            }
+        }
 		bounceY();
 	}
 
 	//check collision with the Bumper
 	if (ballBounds.findIntersection(bumper.getBounds())) {
 		velocity.y = -velocity.y;
+        if (bumper.isMoving()) {
+            velocity.x = std::clamp(velocity.x * 1.2f, -8.f, 10.f);
+        }
 	}
 
 	sf::Vector2f ballCenter = ballBounds.position + ballBounds.size / 2.f;

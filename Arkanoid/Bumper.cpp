@@ -5,9 +5,11 @@ Bumper::Bumper(float width, float height, float speed, unsigned int SCREEN_W, un
 	shape.setSize({ width, height });
 	shape.setFillColor(sf::Color::Cyan);
 	shape.setPosition({ SCREEN_W / 2.f, SCREEN_H - SCREEN_H / 5.f });
+	moving = false;
 }
 
 void Bumper::update(const sf::RenderWindow& window, float direction) {
+	moving = true;
 	sf::Vector2f pos = shape.getPosition();
 	float newX = pos.x + speed * direction;
 	float BumperWidth = shape.getSize().x;
@@ -17,12 +19,18 @@ void Bumper::update(const sf::RenderWindow& window, float direction) {
 	newX = std::max(0.f, std::min(newX, windowWidth - BumperWidth));
 	shape.setPosition({ newX, pos.y });
 }
-void Bumper::draw(sf::RenderWindow& window) const {
+void Bumper::draw(sf::RenderWindow& window) {
+	moving = false;
 	window.draw(shape);
 }
 
 sf::FloatRect Bumper::getBounds() const
 {
 	return shape.getGlobalBounds();
+}
+
+bool Bumper::isMoving() const
+{
+	return moving;
 }
 

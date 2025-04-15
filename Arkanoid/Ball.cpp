@@ -1,5 +1,6 @@
 #include "Ball.h"
 #include "Block.h"
+#include "GameHandler.h"
 
 Ball::Ball(float radius, unsigned int SCREEN_W, unsigned int SCREEN_H) {
 	shape.setRadius(radius);
@@ -7,7 +8,6 @@ Ball::Ball(float radius, unsigned int SCREEN_W, unsigned int SCREEN_H) {
 	startPosition = { SCREEN_W / 2.f, SCREEN_H - SCREEN_H / 3.f };
     shape.setPosition(startPosition);
     velocity = {4.f, -5.f};
-    lives = 3;
 }
 void Ball::bounceX()
 {
@@ -19,12 +19,12 @@ void Ball::bounceY()
 	velocity.y = -velocity.y;
 }
 
-void Ball::update(sf::RenderWindow& window, const Bumper& bumper, std::vector<Block*>& blocks) {
+void Ball::update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<Block*>& blocks) {
 	shape.move(velocity);
-	checkCollision(window, bumper, blocks);
+	checkCollision(window, gh, bumper, blocks);
 }
 
-void Ball::checkCollision(sf::RenderWindow& window, const Bumper& bumper, std::vector<Block*>& blocks) {
+void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<Block*>& blocks) {
 	sf::FloatRect ballBounds = shape.getGlobalBounds();
 
 	// Check collision with window bounds
@@ -33,11 +33,9 @@ void Ball::checkCollision(sf::RenderWindow& window, const Bumper& bumper, std::v
 	}
 	if (ballBounds.position.y <= 0 || ballBounds.position.y + ballBounds.size.y >= window.getSize().y) {
         if (ballBounds.position.y + ballBounds.size.y >= window.getSize().y) {
-            lives--;
+            gh.decrementLives();
+            if (gh.checkLoose()) gh.loose(window);
             shape.setPosition(startPosition);
-            if (lives == 0) {
-                window.close();
-            }
         }
 		bounceY();
 	}
@@ -88,7 +86,8 @@ void Ball::checkCollision(sf::RenderWindow& window, const Bumper& bumper, std::v
             else {
                 ++it;
             }
-
+            //if there is no block left - win
+            if (blocks.empty()) gh.win(window);
             break; // Only one block collision per frame
         }
         else {

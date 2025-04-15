@@ -42,9 +42,41 @@ void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
 
 	//check collision with the Bumper
 	if (ballBounds.findIntersection(bumper.getBounds())) {
-		velocity.y = -velocity.y;
-        if (bumper.isMoving()) {
-            velocity.x = std::clamp(velocity.x * 1.2f, -8.f, 10.f);
+        sf::FloatRect bumperBounds = bumper.getBounds();
+        sf::Vector2f ballCenter = ballBounds.position + ballBounds.size / 2.f;
+        sf::Vector2f bumperCenter = bumperBounds.position + bumperBounds.size / 2.f;
+
+        float dx = ballCenter.x - bumperCenter.x;
+        float dy = ballCenter.y - bumperCenter.y;
+
+        float absDX = std::abs(dx);
+        float absDY = std::abs(dy);
+
+        float halfW = (ballBounds.size.x + bumperBounds.size.x) / 2.f;
+        float halfH = (ballBounds.size.y + bumperBounds.size.y) / 2.f;
+
+        if (absDX > bumperBounds.size.x / 2.f) {
+            //Side hit
+            velocity.x = -velocity.x;
+            velocity.y = std::abs(velocity.y); // always force down after side bump
+
+            if (dx > 0) {
+                shape.setPosition({ bumperBounds.position.x + bumperBounds.size.x, shape.getPosition().y });
+            }
+            else {
+                shape.setPosition({ bumperBounds.position.x - ballBounds.size.x, shape.getPosition().y });
+            }
+        }
+        else {
+            //Top hit
+            velocity.y = -std::abs(velocity.y);
+
+            if (bumper.isMoving()) {
+                velocity.x = std::clamp(velocity.x * 1.2f, -8.f, 8.f);
+            }
+
+            // Push ball above the bumper
+            shape.setPosition({ shape.getPosition().x, bumperBounds.position.y - ballBounds.size.y });
         }
 	}
 

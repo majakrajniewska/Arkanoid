@@ -2,13 +2,15 @@
 #include "Ball.h"
 #include "Bumper.h"
 #include "Block.h"
+#include "GameHandler.h"
 
 int main()
 {
     srand(time(0));
     unsigned int SCREEN_HEIGHT = 900;
     unsigned int SCREEN_WIDTH = 900;
-    sf::RenderWindow* window = new sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "ARKANOID");
+    sf::RenderWindow window = sf::RenderWindow(sf::VideoMode({ SCREEN_WIDTH, SCREEN_HEIGHT }), "ARKANOID");
+    GameHandler gameHandler(3);
     
     Ball ball(25.f, SCREEN_WIDTH, SCREEN_HEIGHT);
     Bumper bumper(170.f, 30.f, 8.f, SCREEN_WIDTH, SCREEN_HEIGHT);
@@ -32,40 +34,40 @@ int main()
         }
     }
 
-    window->setFramerateLimit(60);
+    window.setFramerateLimit(60);
 
-    while (window->isOpen())
+    while (window.isOpen())
     {
         // Real-time movement (no delay when holding keys)
         //A pressed
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::A)) {
-            bumper.update(*window, -1.f);
+            bumper.update(window, -1.f);
         }
         //D pressed
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::D)) {
-            bumper.update(*window, 1.f);
+            bumper.update(window, 1.f);
         }
-        while (const std::optional event = window->pollEvent())
+        while (const std::optional event = window.pollEvent())
         {
             //Close window
             if (event->is<sf::Event::Closed>())
-                window->close();
+                window.close();
             //Keys pressed
             else if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>()) {
                 //Escape
                 if (keyPressed->scancode == sf::Keyboard::Scancode::Escape)
-                    window->close();
+                    window.close();
             }
         }
-        ball.update(*window, bumper, blocks);
+        ball.update(window, gameHandler, bumper, blocks);
 
-        window->clear();
-        ball.draw(*window);
-        bumper.draw(*window);
-        bumper.draw(*window);
+        window.clear();
+        ball.draw(window);
+        bumper.draw(window);
+        bumper.draw(window);
         for(Block *b : blocks) {
-            b->draw(*window);
+            b->draw(window);
         }
-        window->display();
+        window.display();
     }
 }

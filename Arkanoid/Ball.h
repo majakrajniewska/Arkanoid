@@ -7,7 +7,7 @@ class Ball
 {
 public:
 	Ball(float radius, unsigned int SCREEN_W, unsigned int SCREEN_H);
-	void update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<Block*>& blocks);
+	void update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks);
 	void draw(sf::RenderWindow& window) const;
 
 private:
@@ -15,7 +15,7 @@ private:
 	sf::Vector2f velocity;
 	sf::Vector2f startPosition;
 
-	void checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<Block*>& blocks);
+	void checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks);
 	void bounceX();
 	void bounceY();
 };

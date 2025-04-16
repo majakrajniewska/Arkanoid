@@ -1,16 +1,15 @@
 #include "GamePlayingState.h"
 
-GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, Difficulty difficulty)
+GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, Difficulty difficulty, BallSpeed speed)
     : window(win), windowWidth(screenW), windowHeight(screenH),
-    ball(25.f, screenW, screenH),
+    ball(25.f, screenW, screenH, speed),
     bumper(170.f, 30.f, 8.f, screenW, screenH),
     gameHandler(3), difficulty(difficulty)
 {
     std::vector<std::vector<int>> mapSimple = {
         {1, 0, 2, 0, 1, 0, 2, 0},
         {0, 1, 0, 2, 0, 1, 0, 2},
-        {2, 0, 1, 0, 2, 0, 1, 0},
-        {0, 2, 0, 1, 0, 2, 0, 1}
+        {2, 0, 1, 0, 2, 0, 1, 0}
     };
 
     std::vector<std::vector<int>> mapNormal = {

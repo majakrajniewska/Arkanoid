@@ -12,7 +12,7 @@
 
 class GamePlayingState : public GameState {
 public:
-    GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, Difficulty difficulty);
+    GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, Difficulty difficulty, BallSpeed speed);
 
     void handleEvent(sf::Event& event) override;
     void update(float dt) override;

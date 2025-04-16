@@ -19,12 +19,12 @@ void Ball::bounceY()
 	velocity.y = -velocity.y;
 }
 
-void Ball::update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<Block*>& blocks) {
-	shape.move(velocity);
-	checkCollision(window, gh, bumper, blocks);
+void Ball::update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
+    shape.move(velocity);
+    checkCollision(window, gh, bumper, blocks);
 }
 
-void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<Block*>& blocks) {
+void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
 	sf::FloatRect ballBounds = shape.getGlobalBounds();
 
 	// Check collision with window bounds
@@ -34,7 +34,7 @@ void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
 	if (ballBounds.position.y <= 0 || ballBounds.position.y + ballBounds.size.y >= window.getSize().y) {
         if (ballBounds.position.y + ballBounds.size.y >= window.getSize().y) {
             gh.decrementLives();
-            if (gh.checkLoose()) gh.loose(window);
+            if (gh.checkLose()) gh.lose(window);
             shape.setPosition(startPosition);
         }
 		bounceY();
@@ -84,15 +84,13 @@ void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
 
 	//check collision with blocks
     for (auto it = blocks.begin(); it != blocks.end(); ) {
-        Block* block = *it;
-
+        Block* block = it->get();
         if (ballBounds.findIntersection(block->getBounds())) {
             block->decrementLives();
 
             sf::FloatRect blockBounds = block->getBounds();
             sf::Vector2f blockCenter = blockBounds.position + blockBounds.size / 2.f;
 
-            // Calculate delta between centers
             float dx = ballCenter.x - blockCenter.x;
             float dy = ballCenter.y - blockCenter.y;
 
@@ -102,7 +100,6 @@ void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
             float overlapX = combinedHalfWidths - std::abs(dx);
             float overlapY = combinedHalfHeights - std::abs(dy);
 
-            // Bounce in the direction of least overlap
             if (overlapX < overlapY) {
                 bounceX();
             }
@@ -110,17 +107,18 @@ void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
                 bounceY();
             }
 
-            // If block is destroyed, delete and remove it
             if (block->getLives() <= 0) {
-                it = blocks.erase(it);
-                delete block;
+                it = blocks.erase(it); // unique_ptr auto-deletes
             }
             else {
                 ++it;
             }
-            //if there is no block left - win
-            if (blocks.empty()) gh.win(window);
-            break; // Only one block collision per frame
+
+            if (blocks.empty()) {
+                gh.win(window);
+            }
+
+            break; // One block per frame
         }
         else {
             ++it;

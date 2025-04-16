@@ -9,12 +9,12 @@ void GameHandler::win(sf::RenderWindow& window)
 	window.close();
 }
 
-void GameHandler::loose(sf::RenderWindow& window)
+void GameHandler::lose(sf::RenderWindow& window)
 {
 	window.close();
 }
 
-bool GameHandler::checkLoose()
+bool GameHandler::checkLose()
 {
 	return lives == 0;
 }

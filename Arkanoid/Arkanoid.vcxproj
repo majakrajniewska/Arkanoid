@@ -139,13 +139,23 @@
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Bumper.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="GameHandler.cpp" />
+    <ClCompile Include="GamePlayingState.cpp" />
+    <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="MenuState.cpp" />
+    <ClCompile Include="StateManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Bumper.h" />
     <ClInclude Include="Block.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="GameHandler.h" />
+    <ClInclude Include="GamePlayingState.h" />
+    <ClInclude Include="GameState.h" />
+    <ClInclude Include="MenuState.h" />
+    <ClInclude Include="StateManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

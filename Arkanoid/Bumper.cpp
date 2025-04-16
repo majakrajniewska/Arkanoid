@@ -8,12 +8,11 @@ Bumper::Bumper(float width, float height, float speed, unsigned int SCREEN_W, un
 	moving = false;
 }
 
-void Bumper::update(const sf::RenderWindow& window, float direction) {
+void Bumper::update(const unsigned int windowWidth, float direction) {
 	moving = true;
 	sf::Vector2f pos = shape.getPosition();
 	float newX = pos.x + speed * direction;
 	float BumperWidth = shape.getSize().x;
-	float windowWidth = static_cast<float>(window.getSize().x);
 
 	// Clamp newX between 0 and window width - Bumper width
 	newX = std::max(0.f, std::min(newX, windowWidth - BumperWidth));

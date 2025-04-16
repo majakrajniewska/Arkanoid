@@ -32,12 +32,12 @@ int main() {
     }
 
     StateManager manager;
-    manager.push(std::make_unique<GamePlayingState>(window, SCREEN_WIDTH, SCREEN_HEIGHT, menu.getSelectedDifficulty()));
+    manager.push(std::make_unique<GamePlayingState>(window, SCREEN_WIDTH, SCREEN_HEIGHT, menu.getSelectedDifficulty(), menu.getSelectedBallSpeed()));
 
 
     sf::Clock clock;
 
-    //GAME LOOP
+    //GAME LOOPda
     while (window.isOpen()) {
         while (auto event = window.pollEvent()) {
             manager.handleEvent(*event);

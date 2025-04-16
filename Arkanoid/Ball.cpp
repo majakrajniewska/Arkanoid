@@ -1,13 +1,17 @@
 #include "Ball.h"
 #include "Block.h"
 #include "GameHandler.h"
+#include <cstdlib>
+#include <ctime>
+#include <cmath>
 
-Ball::Ball(float radius, unsigned int SCREEN_W, unsigned int SCREEN_H) {
+Ball::Ball(float radius, unsigned int SCREEN_W, unsigned int SCREEN_H, BallSpeed speed) : speed(speed) {
 	shape.setRadius(radius);
 	shape.setFillColor(sf::Color::Magenta);
 	startPosition = { SCREEN_W / 2.f, SCREEN_H - SCREEN_H / 3.f };
     shape.setPosition(startPosition);
-    velocity = {4.f, -5.f};
+    initRandom();
+    generateVelocity();
 }
 void Ball::bounceX()
 {
@@ -17,6 +21,26 @@ void Ball::bounceX()
 void Ball::bounceY()
 {
 	velocity.y = -velocity.y;
+}
+
+void Ball::generateVelocity()
+{
+    float s;
+    switch (speed) {
+    case BallSpeed::Slow: s = 5.f; break;
+    case BallSpeed::Normal: s = 8.f; break;
+    case BallSpeed::Fast: s = 12.f;
+    }
+    float min = -30.f;
+    float max = -150.f;
+    float alfa = min + static_cast<float>(std::rand()) / RAND_MAX * (max - min);
+    float alfaRadians = alfa * (3.14159265f / 180.0f);
+    velocity = {s*std::cos(alfaRadians), s*std::sin(alfaRadians)};
+}
+
+void Ball::initRandom()
+{
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
 }
 
 void Ball::update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
@@ -31,14 +55,14 @@ void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
 	if (ballBounds.position.x <= 0 || ballBounds.position.x + ballBounds.size.x >= window.getSize().x) {
 		bounceX();
 	}
-	if (ballBounds.position.y <= 0 || ballBounds.position.y + ballBounds.size.y >= window.getSize().y) {
-        if (ballBounds.position.y + ballBounds.size.y >= window.getSize().y) {
-            gh.decrementLives();
-            if (gh.checkLose()) gh.lose(window);
-            shape.setPosition(startPosition);
-        }
+	if (ballBounds.position.y <= 0) {
 		bounceY();
 	}
+    if (ballBounds.position.y + ballBounds.size.y >= window.getSize().y) {
+        gh.decrementLives();
+        if (gh.checkLose()) gh.lose(window);
+        reset();
+    }
 
 	//check collision with the Bumper
 	if (ballBounds.findIntersection(bumper.getBounds())) {
@@ -128,6 +152,12 @@ void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
 
 void Ball::draw(sf::RenderWindow& window) const {
 	window.draw(shape);
+}
+
+void Ball::reset()
+{
+    shape.setPosition(startPosition);
+    generateVelocity();
 }
 
 

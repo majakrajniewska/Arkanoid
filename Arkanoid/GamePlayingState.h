@@ -7,10 +7,12 @@
 #include "GameHandler.h"
 #include <vector>
 #include <memory>
+#include "Difficulty.h"
+#include "BallSpeed.h"
 
 class GamePlayingState : public GameState {
 public:
-    GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH);
+    GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, Difficulty difficulty);
 
     void handleEvent(sf::Event& event) override;
     void update(float dt) override;
@@ -26,4 +28,7 @@ private:
     GameHandler gameHandler;
     std::vector<std::unique_ptr<Block>> blocks;
     bool exitRequested = false;
+    Difficulty difficulty;
+
+    void generateMap(std::vector<std::vector<int>> map);
 };

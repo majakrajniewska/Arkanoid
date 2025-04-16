@@ -4,9 +4,8 @@
 #include "Button.h"
 #include <vector>
 #include <memory>
-
-enum class Difficulty { Easy, Medium, Hard };
-enum class BallSpeed { Slow, Normal, Fast };
+#include "Difficulty.h"
+#include "BallSpeed.h"
 
 class MenuState : public GameState {
 public:

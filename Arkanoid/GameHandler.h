@@ -8,6 +8,7 @@ public:
 	void lose(sf::RenderWindow& window);
 	bool checkLose();
 	void decrementLives();
+	int addPoints(int p);
 private:
 	int lives;
 	int points;

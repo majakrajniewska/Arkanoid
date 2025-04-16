@@ -24,3 +24,9 @@ void GameHandler::decrementLives()
 	lives--;
 }
 
+int GameHandler::addPoints(int p)
+{
+	return points+=p;
+}
+
+

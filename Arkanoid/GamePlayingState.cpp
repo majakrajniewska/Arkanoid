@@ -1,25 +1,38 @@
 #include "GamePlayingState.h"
 
-GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH)
+GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, Difficulty difficulty)
     : window(win), windowWidth(screenW), windowHeight(screenH),
     ball(25.f, screenW, screenH),
     bumper(170.f, 30.f, 8.f, screenW, screenH),
-    gameHandler(3)
+    gameHandler(3), difficulty(difficulty)
 {
-    std::vector<std::vector<int>> map = {
+    std::vector<std::vector<int>> mapSimple = {
+        {1, 0, 2, 0, 1, 0, 2, 0},
+        {0, 1, 0, 2, 0, 1, 0, 2},
+        {2, 0, 1, 0, 2, 0, 1, 0},
+        {0, 2, 0, 1, 0, 2, 0, 1}
+    };
+
+    std::vector<std::vector<int>> mapNormal = {
         {1, 2, 0, 3, 1, 1, 3, 0, 2, 1},
         {0, 3, 2, 0, 1, 1, 0, 2, 3, 0},
         {2, 1, 1, 0, 3, 3, 0, 1, 1, 2},
         {1, 0, 3, 2, 0, 0, 2, 3, 0, 1}
     };
 
-    for (int i = 0; i < map.size(); i++) {
-        for (int j = 0; j < map[0].size(); j++) {
-            if (map[i][j] != 0) {
-                blocks.push_back(std::make_unique<Block>(80, 80, j * 85, i * 85, map[i][j]));
-            }
-        }
+    std::vector<std::vector<int>> mapHard = {
+        {2, 3, 0, 3, 2, 0, 3, 2, 1, 0, 2, 1},
+        {3, 0, 2, 0, 3, 2, 0, 3, 2, 1, 3, 0},
+        {0, 3, 2, 0, 3, 0, 2, 1, 0, 3, 2, 1},
+        {3, 1, 0, 2, 1, 3, 0, 2, 3, 0, 1, 0},
+        {1, 2, 3, 0, 2, 3, 0, 3, 2, 0, 1, 2},
+    };
+    switch (difficulty) {
+    case Difficulty::Easy: generateMap(mapSimple); break;
+    case Difficulty::Medium: generateMap(mapNormal); break;
+    case Difficulty::Hard: generateMap(mapHard); break;
     }
+
 }
 
 void GamePlayingState::handleEvent(sf::Event& event) {
@@ -53,4 +66,17 @@ void GamePlayingState::render(sf::RenderWindow& window) {
 
 bool GamePlayingState::shouldExit() const {
     return exitRequested;
+}
+
+void GamePlayingState::generateMap(std::vector<std::vector<int>> map)
+{
+    float blockSize = windowWidth / map[0].size();
+    for (int i = 0; i < map.size(); i++) {
+        for (int j = 0; j < map[0].size(); j++) {
+            if (map[i][j] != 0) {
+                blocks.push_back(std::make_unique<Block>(blockSize, blockSize,
+                    j * blockSize, i * blockSize, map[i][j]));
+            }
+        }
+    }
 }

@@ -148,9 +148,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ball.h" />
+    <ClInclude Include="BallSpeed.h" />
     <ClInclude Include="Bumper.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Difficulty.h" />
     <ClInclude Include="GameHandler.h" />
     <ClInclude Include="GamePlayingState.h" />
     <ClInclude Include="GameState.h" />

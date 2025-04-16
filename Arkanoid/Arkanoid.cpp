@@ -32,7 +32,7 @@ int main() {
     }
 
     StateManager manager;
-    manager.push(std::make_unique<GamePlayingState>(window, SCREEN_WIDTH, SCREEN_HEIGHT));
+    manager.push(std::make_unique<GamePlayingState>(window, SCREEN_WIDTH, SCREEN_HEIGHT, menu.getSelectedDifficulty()));
 
 
     sf::Clock clock;

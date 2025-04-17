@@ -41,7 +41,8 @@ void MenuState::handleEvent(sf::Event& event) {
 
         updateButtonTexts();
     }
-    else if (event.is<sf::Event::Closed>()) {
+    else if (event.is<sf::Event::Closed>() || 
+        (event.is<sf::Event::KeyPressed>() && sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Escape))) {
         exitRequested = true;
     }
 }
@@ -69,6 +70,12 @@ Difficulty MenuState::getSelectedDifficulty() const {
 
 BallSpeed MenuState::getSelectedBallSpeed() const {
     return currentSpeed;
+}
+
+void MenuState::reset()
+{
+    startGame = false;
+    exitRequested = false;
 }
 
 void MenuState::updateButtonTexts() {

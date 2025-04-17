@@ -60,7 +60,6 @@ void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
 	}
     if (ballBounds.position.y + ballBounds.size.y >= window.getSize().y) {
         gh.decrementLives();
-        if (gh.checkLose()) gh.lose(window);
         reset();
     }
 

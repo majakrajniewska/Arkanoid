@@ -1,7 +1,42 @@
 ﻿#include <SFML/Graphics.hpp>
+#include <iostream>
 #include "StateManager.h"
 #include "GamePlayingState.h"
 #include "MenuState.h"
+
+void openMenu(sf::RenderWindow& window, MenuState& menu) {
+    menu.reset();
+    std::cout << "ENTER MENU...";
+    while (window.isOpen() && !menu.shouldExit() && !menu.shouldStartGame()) {
+        while (auto event = window.pollEvent()) {
+            menu.handleEvent(*event);
+        }
+        menu.render(window);
+    }
+}
+
+void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font, Difficulty difficulty, BallSpeed ballSpeed) {
+    manager.push(std::make_unique<GamePlayingState>(window, 900, 900, difficulty, ballSpeed));
+    sf::Clock clock;
+
+    while (window.isOpen()) {
+        while (auto event = window.pollEvent()) {
+            manager.handleEvent(*event);
+        }
+
+        float dt = clock.restart().asSeconds();
+        manager.update(dt);
+
+        if (auto* game = dynamic_cast<GamePlayingState*>(manager.top())) {
+            if (game->shouldExit()) {
+                break;
+            }
+        }
+
+        manager.render(window);
+    }
+    manager.pop();
+}
 
 int main() {
     unsigned int SCREEN_WIDTH = 900;
@@ -17,40 +52,14 @@ int main() {
     // buttonTex.loadFromFile("path/to/button-image.png"); // optional
 
     MenuState menu(window, font);
-    //MENU LOOP
-
-    while (window.isOpen() && !menu.shouldExit() && !menu.shouldStartGame()) {
-        while (auto event = window.pollEvent()) {
-            menu.handleEvent(*event);
-        }
-        menu.render(window);
-    }
-
-    if (menu.shouldExit()) {
-        window.close();
-        return 0;
-    }
-
     StateManager manager;
-    manager.push(std::make_unique<GamePlayingState>(window, SCREEN_WIDTH, SCREEN_HEIGHT, menu.getSelectedDifficulty(), menu.getSelectedBallSpeed()));
 
-
-    sf::Clock clock;
-
-    //GAME LOOPda
     while (window.isOpen()) {
-        while (auto event = window.pollEvent()) {
-            manager.handleEvent(*event);
-        }
-
-        float dt = clock.restart().asSeconds();
-        manager.update(dt);
-
-        if (auto* game = dynamic_cast<GamePlayingState*>(manager.top())) {
-            if (game->shouldExit())
-                window.close(); // Later switch to GameOverState or Menu
-        }
-
-        manager.render(window);
+        openMenu(window, menu);
+        if (menu.shouldExit()) break;
+        runGame(manager, window, font, menu.getSelectedDifficulty(), menu.getSelectedBallSpeed());
     }
+
+    return 0;
 }
+

@@ -36,7 +36,7 @@ GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, 
 
 void GamePlayingState::handleEvent(sf::Event& event) {
     if (event.is<sf::Event::Closed>())
-        exitRequested = true;
+        window.close();
     else if (event.is<sf::Event::KeyPressed>() && sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Escape))
         exitRequested = true;
 }

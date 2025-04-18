@@ -1,7 +1,57 @@
 ﻿#include <SFML/Graphics.hpp>
+#include <iostream>
+#include <memory>
 #include "StateManager.h"
 #include "GamePlayingState.h"
 #include "MenuState.h"
+#include "PauseState.h"
+
+void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font, Difficulty difficulty, BallSpeed ballSpeed) {
+    manager.push(std::make_unique<GamePlayingState>(window, 900, 900, difficulty, ballSpeed));
+    sf::Clock clock;
+
+    while (window.isOpen()) {
+        while (auto event = window.pollEvent()) {
+            manager.handleEvent(*event);
+        }
+
+        float dt = clock.restart().asSeconds();
+        manager.update(dt);
+
+        if (auto* game = dynamic_cast<GamePlayingState*>(manager.top())) {
+            if (game->shouldPause()) {
+                game->reset();
+                manager.push(std::make_unique<PauseState>(window, font));
+                continue; // wait for pause state to handle events
+            }
+            if (game->shouldExit()) {
+                break;
+            }
+        }
+
+        if (auto* pause = dynamic_cast<PauseState*>(manager.top())) {
+            if (pause->shouldStartGame()) {
+                manager.pop(); // resume: pop pause state
+            }
+            else if (pause->shouldGoBackToMenu()) {
+                std::cout << "SHOULD GO BACK TO MENUUUU";
+                manager.pop(); // pop PauseState
+                manager.pop(); // pop GamePlayingState
+                break;
+            }
+            else if (pause->shouldExit()) {
+                std::cout << "EXIT";
+                manager.pop(); // pop PauseState
+                manager.pop(); // pop GamePlayingState
+                manager.pop(); // pop menu
+                window.close();
+                break;
+            }
+        }
+
+        manager.render(window);
+    }
+}
 
 int main() {
     unsigned int SCREEN_WIDTH = 900;
@@ -14,43 +64,36 @@ int main() {
     font.openFromFile("assets/fonts/Junicode.ttf");
 
     sf::Texture buttonTex;
-    // buttonTex.loadFromFile("path/to/button-image.png"); // optional
-
-    MenuState menu(window, font);
-    //MENU LOOP
-
-    while (window.isOpen() && !menu.shouldExit() && !menu.shouldStartGame()) {
-        while (auto event = window.pollEvent()) {
-            menu.handleEvent(*event);
-        }
-        menu.render(window);
-    }
-
-    if (menu.shouldExit()) {
-        window.close();
-        return 0;
-    }
+    //buttonTex.loadFromFile("path/to/button-image.png"); // optional
 
     StateManager manager;
-    manager.push(std::make_unique<GamePlayingState>(window, SCREEN_WIDTH, SCREEN_HEIGHT, menu.getSelectedDifficulty(), menu.getSelectedBallSpeed()));
 
+    //add menu to the manager - stack
+    manager.push(std::make_unique<MenuState>(window, font));
 
-    sf::Clock clock;
-
-    //GAME LOOPda
     while (window.isOpen()) {
         while (auto event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>())
+                window.close();
             manager.handleEvent(*event);
         }
 
-        float dt = clock.restart().asSeconds();
-        manager.update(dt);
-
-        if (auto* game = dynamic_cast<GamePlayingState*>(manager.top())) {
-            if (game->shouldExit())
-                window.close(); // Later switch to GameOverState or Menu
-        }
-
         manager.render(window);
+
+        if (auto* menu = dynamic_cast<MenuState*>(manager.top())) {
+            if (menu->shouldExit()) {
+                manager.pop();  // pop menu
+                break;
+            }
+            if (menu->shouldStartGame()) {
+                Difficulty diff = menu->getSelectedDifficulty();
+                BallSpeed speed = menu->getSelectedBallSpeed();
+                menu->reset();  // reset selection for next time
+                runGame(manager, window, font, diff, speed);
+            }
+        }
     }
+
+    return 0;
 }
+

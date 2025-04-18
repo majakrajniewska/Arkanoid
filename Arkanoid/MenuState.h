@@ -19,6 +19,7 @@ public:
     bool shouldExit() const;
     Difficulty getSelectedDifficulty() const;
     BallSpeed getSelectedBallSpeed() const;
+    void reset();
 
 private:
     sf::RenderWindow& window;

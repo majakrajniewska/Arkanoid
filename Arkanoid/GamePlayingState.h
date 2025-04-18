@@ -18,6 +18,8 @@ public:
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     bool shouldExit() const;
+    bool shouldPause() const;
+    void reset();
 
 private:
     sf::RenderWindow& window;
@@ -28,6 +30,7 @@ private:
     GameHandler gameHandler;
     std::vector<std::unique_ptr<Block>> blocks;
     bool exitRequested = false;
+    bool pauseRequested = false;
     Difficulty difficulty;
 
     void generateMap(std::vector<std::vector<int>> map);

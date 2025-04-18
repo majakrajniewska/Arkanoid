@@ -38,7 +38,7 @@ void GamePlayingState::handleEvent(sf::Event& event) {
     if (event.is<sf::Event::Closed>())
         window.close();
     else if (event.is<sf::Event::KeyPressed>() && sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Escape))
-        exitRequested = true;
+        pauseRequested = true;
 }
 
 void GamePlayingState::update(float dt) {
@@ -67,6 +67,11 @@ bool GamePlayingState::shouldExit() const {
     return exitRequested;
 }
 
+bool GamePlayingState::shouldPause() const
+{
+    return pauseRequested;
+}
+
 void GamePlayingState::generateMap(std::vector<std::vector<int>> map)
 {
     float blockSize = windowWidth / map[0].size();
@@ -78,4 +83,9 @@ void GamePlayingState::generateMap(std::vector<std::vector<int>> map)
             }
         }
     }
+}
+
+void GamePlayingState::reset()
+{
+    pauseRequested = false;
 }

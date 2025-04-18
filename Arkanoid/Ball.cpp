@@ -138,7 +138,7 @@ void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
             }
 
             if (blocks.empty()) {
-                gh.win(window);
+                //gh.win(window);
             }
 
             break; // One block per frame

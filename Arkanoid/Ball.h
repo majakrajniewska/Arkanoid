@@ -24,6 +24,5 @@ private:
 	void bounceY();
 
 	void generateVelocity();
-	void initRandom();
 };
 

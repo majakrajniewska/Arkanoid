@@ -25,6 +25,7 @@ void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font, Di
                 continue; // wait for pause state to handle events
             }
             if (game->shouldExit()) {
+                manager.pop(); // pop GamePlayingState
                 break;
             }
         }
@@ -34,13 +35,11 @@ void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font, Di
                 manager.pop(); // resume: pop pause state
             }
             else if (pause->shouldGoBackToMenu()) {
-                std::cout << "SHOULD GO BACK TO MENUUUU";
                 manager.pop(); // pop PauseState
                 manager.pop(); // pop GamePlayingState
                 break;
             }
             else if (pause->shouldExit()) {
-                std::cout << "EXIT";
                 manager.pop(); // pop PauseState
                 manager.pop(); // pop GamePlayingState
                 manager.pop(); // pop menu
@@ -54,6 +53,7 @@ void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font, Di
 }
 
 int main() {
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
     unsigned int SCREEN_WIDTH = 900;
     unsigned int SCREEN_HEIGHT = 900;
 

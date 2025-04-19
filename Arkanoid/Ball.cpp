@@ -10,7 +10,6 @@ Ball::Ball(float radius, unsigned int SCREEN_W, unsigned int SCREEN_H, BallSpeed
 	shape.setFillColor(sf::Color::Magenta);
 	startPosition = { SCREEN_W / 2.f, SCREEN_H - SCREEN_H / 3.f };
     shape.setPosition(startPosition);
-    initRandom();
     generateVelocity();
 }
 void Ball::bounceX()
@@ -36,11 +35,6 @@ void Ball::generateVelocity()
     float alfa = min + static_cast<float>(std::rand()) / RAND_MAX * (max - min);
     float alfaRadians = alfa * (3.14159265f / 180.0f);
     velocity = {s*std::cos(alfaRadians), s*std::sin(alfaRadians)};
-}
-
-void Ball::initRandom()
-{
-    std::srand(static_cast<unsigned>(std::time(nullptr)));
 }
 
 void Ball::update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {

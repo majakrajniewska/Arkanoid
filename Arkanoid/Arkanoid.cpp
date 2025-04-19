@@ -7,7 +7,7 @@
 #include "PauseState.h"
 
 void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font, Difficulty difficulty, BallSpeed ballSpeed) {
-    manager.push(std::make_unique<GamePlayingState>(window, 900, 900, difficulty, ballSpeed));
+    manager.push(std::make_unique<GamePlayingState>(window, 900, 900, difficulty, ballSpeed, font));
     sf::Clock clock;
 
     while (window.isOpen()) {

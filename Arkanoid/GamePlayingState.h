@@ -9,10 +9,11 @@
 #include <memory>
 #include "Difficulty.h"
 #include "BallSpeed.h"
+#include "HUD.h"
 
 class GamePlayingState : public GameState {
 public:
-    GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, Difficulty difficulty, BallSpeed speed);
+    GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, Difficulty difficulty, BallSpeed speed, sf::Font& font);
 
     void handleEvent(sf::Event& event) override;
     void update(float dt) override;
@@ -32,6 +33,8 @@ private:
     bool exitRequested = false;
     bool pauseRequested = false;
     Difficulty difficulty;
+    float pointsCoefficient = 1;
+    HUD hud;
 
     void generateMap(std::vector<std::vector<int>> map);
 };

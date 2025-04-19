@@ -143,6 +143,7 @@
     <ClCompile Include="GameHandler.cpp" />
     <ClCompile Include="GamePlayingState.cpp" />
     <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="PauseState.cpp" />
     <ClCompile Include="StateManager.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="GameHandler.h" />
     <ClInclude Include="GamePlayingState.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="HUD.h" />
     <ClInclude Include="MenuState.h" />
     <ClInclude Include="PauseState.h" />
     <ClInclude Include="StateManager.h" />

@@ -37,12 +37,12 @@ void Ball::generateVelocity()
     velocity = {s*std::cos(alfaRadians), s*std::sin(alfaRadians)};
 }
 
-void Ball::update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
+bool Ball::update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
     shape.move(velocity);
-    checkCollision(window, gh, bumper, blocks);
+    return checkCollision(window, gh, bumper, blocks);
 }
 
-void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
+bool Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
 	sf::FloatRect ballBounds = shape.getGlobalBounds();
 
 	// Check collision with window bounds
@@ -135,12 +135,14 @@ void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
                 //gh.win(window);
             }
 
-            break; // One block per frame
+            //return true if block was hitted
+            return true;
         }
         else {
             ++it;
         }
     }
+    return false;
 }
 
 void Ball::draw(sf::RenderWindow& window) const {

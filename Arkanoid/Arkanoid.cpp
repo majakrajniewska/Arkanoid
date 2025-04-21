@@ -5,8 +5,10 @@
 #include "GamePlayingState.h"
 #include "MenuState.h"
 #include "PauseState.h"
+#include "GameOverState.h"
 
-void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font, Difficulty difficulty, BallSpeed ballSpeed) {
+void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font, 
+    Difficulty difficulty, BallSpeed ballSpeed, bool& restart) {
     manager.push(std::make_unique<GamePlayingState>(window, 900, 900, difficulty, ballSpeed, font));
     sf::Clock clock;
 
@@ -28,6 +30,11 @@ void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font, Di
                 manager.pop(); // pop GamePlayingState
                 break;
             }
+            if (game->isOver()) {
+                manager.push(std::make_unique<GameOverState>(window, font, game->getTime(), 
+                    game->getGameHandler().getPoints(), !game->getGameHandler().checkLose()));
+                continue; // wait for gameOver state to handle events
+            }
         }
 
         if (auto* pause = dynamic_cast<PauseState*>(manager.top())) {
@@ -41,6 +48,28 @@ void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font, Di
             }
             else if (pause->shouldExit()) {
                 manager.pop(); // pop PauseState
+                manager.pop(); // pop GamePlayingState
+                manager.pop(); // pop menu
+                window.close();
+                break;
+            }
+        }
+
+        //ADD GAME OVER STATE HANDLING
+        if (auto* over = dynamic_cast<GameOverState*>(manager.top())) {
+            if (over->shouldRestartGame()) {
+                manager.pop(); // pop GameOverState
+                manager.pop(); // pop GamePlayingState
+                restart = true;
+                break;
+            }
+            else if (over->shouldGoBackToMenu()) {
+                manager.pop(); // pop GameOverState
+                manager.pop(); // pop GamePlayingState
+                break;
+            }
+            else if (over->shouldExit()) {
+                manager.pop(); // pop GameOverState
                 manager.pop(); // pop GamePlayingState
                 manager.pop(); // pop menu
                 window.close();
@@ -67,6 +96,7 @@ int main() {
     //buttonTex.loadFromFile("path/to/button-image.png"); // optional
 
     StateManager manager;
+    bool restart = false;
 
     //add menu to the manager - stack
     manager.push(std::make_unique<MenuState>(window, font));
@@ -85,11 +115,12 @@ int main() {
                 manager.pop();  // pop menu
                 break;
             }
-            if (menu->shouldStartGame()) {
+            if (menu->shouldStartGame() || restart) {
                 Difficulty diff = menu->getSelectedDifficulty();
                 BallSpeed speed = menu->getSelectedBallSpeed();
                 menu->reset();  // reset selection for next time
-                runGame(manager, window, font, diff, speed);
+                restart = false;
+                runGame(manager, window, font, diff, speed, restart);
             }
         }
     }

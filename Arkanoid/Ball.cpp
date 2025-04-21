@@ -126,17 +126,13 @@ bool Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
 
             if (block->getLives() <= 0) {
                 it = blocks.erase(it); // unique_ptr auto-deletes
+                //return true if block was killed
+                return true;
+
             }
             else {
                 ++it;
             }
-
-            if (blocks.empty()) {
-                //gh.win(window);
-            }
-
-            //return true if block was hitted
-            return true;
         }
         else {
             ++it;

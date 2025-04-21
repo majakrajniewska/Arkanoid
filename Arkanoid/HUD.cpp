@@ -2,12 +2,10 @@
 
 HUD::HUD(sf::Font& font, const sf::Texture* buttonTexture) 
     : timeText(font), pointsText(font) {
-    timeText.setFont(font);
     timeText.setCharacterSize(30);
     timeText.setFillColor(sf::Color::White);
     timeText.setPosition({ 100, 10 });
 
-    pointsText.setFont(font);
     pointsText.setCharacterSize(30);
     pointsText.setFillColor(sf::Color::White);
     pointsText.setPosition({ 300, 10 });
@@ -17,7 +15,15 @@ HUD::HUD(sf::Font& font, const sf::Texture* buttonTexture)
 }
 
 void HUD::update(float elapsedTime, int currentPoints) {
-    timeText.setString("Time: " + std::to_string(static_cast<int>(elapsedTime)));
+    int minutes = static_cast<int>(elapsedTime) / 60;
+    int seconds = static_cast<int>(elapsedTime) % 60;
+
+    std::ostringstream timeStream;
+    timeStream << "Time: " << std::setw(2) << std::setfill('0') << minutes
+        << ":" << std::setw(2) << std::setfill('0') << seconds;
+
+    timeText.setString(timeStream.str());
+
     pointsText.setString("Points: " + std::to_string(currentPoints));
 }
 

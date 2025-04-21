@@ -1,7 +1,8 @@
 #include "GamePlayingState.h"
 #include "HUD.h"
 
-GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, Difficulty difficulty, BallSpeed speed, sf::Font& font)
+GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, 
+    Difficulty difficulty, BallSpeed speed, sf::Font& font)
     : window(win), windowWidth(screenW), windowHeight(screenH),
     ball(25.f, screenW, screenH, speed),
     bumper(170.f, 30.f, 8.f, screenW, screenH),
@@ -29,9 +30,15 @@ GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, 
     };
 
     switch (difficulty) {
-    case Difficulty::Easy: generateMap(mapSimple); pointsCoefficient = 1.3f; break;
-    case Difficulty::Medium: generateMap(mapNormal); pointsCoefficient = 1.2f; break;
-    case Difficulty::Hard: generateMap(mapHard); pointsCoefficient = 1.1f; break;
+    case Difficulty::Easy: generateMap(mapSimple); pointsCoefficient = 1; break;
+    case Difficulty::Medium: generateMap(mapNormal); pointsCoefficient = 2; break;
+    case Difficulty::Hard: generateMap(mapHard); pointsCoefficient = 3; break;
+    }
+
+    switch (speed) {
+    case BallSpeed::Slow: pointsCoefficient += 1; break;
+    case BallSpeed::Normal: pointsCoefficient += 2; break;
+    case BallSpeed::Fast: pointsCoefficient += 3; break;
     }
 
 }
@@ -58,10 +65,11 @@ void GamePlayingState::update(float dt) {
 
     if(ball.update(window, gameHandler, bumper, blocks)) gameHandler.addPoints(pointsCoefficient);
 
-    hud.update(dt, gameHandler.getPoints());
+    timePassed += dt;
+    hud.update(timePassed, gameHandler.getPoints());
 
     if (gameHandler.checkLose() || blocks.empty()) {
-        exitRequested = true;
+        over = true;
     }
 }
 
@@ -100,4 +108,19 @@ void GamePlayingState::generateMap(std::vector<std::vector<int>> map)
 void GamePlayingState::reset()
 {
     pauseRequested = false;
+}
+
+float GamePlayingState::getTime() const
+{
+    return timePassed;
+}
+
+GameHandler GamePlayingState::getGameHandler() const
+{
+    return gameHandler;
+}
+
+bool GamePlayingState::isOver() const
+{
+    return over;
 }

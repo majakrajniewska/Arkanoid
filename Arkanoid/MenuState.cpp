@@ -95,5 +95,8 @@ void MenuState::updateButtonTexts() {
 
     buttons[0]->setText(diffText);
     buttons[1]->setText(speedText);
+
+    buttons[0]->centerLabel(buttons[0]->getX(), buttons[0]->getY());
+    buttons[1]->centerLabel(buttons[1]->getX(), buttons[1]->getY());
 }
 

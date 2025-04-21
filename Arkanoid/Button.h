@@ -12,12 +12,15 @@ public:
     Button(const std::string& text, const sf::Color& bgColor, const sf::Font& font, unsigned int width, unsigned int height);
 
     void setPosition(float x, float y);
+    void centerLabel(float x, float y);
     void draw(sf::RenderWindow& window) const;
     bool isHovered(const sf::Vector2f& mousePos) const;
     void setText(const std::string& newText);
 
     float getWidth() const;
     float getHeight() const;
+    float getX() const;
+    float getY() const;
 
 private:
     sf::RectangleShape background;

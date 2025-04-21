@@ -33,12 +33,7 @@ void Button::setPosition(float x, float y) {
         background.setPosition(pos);
     }
 
-    // Center label
-    sf::FloatRect textBounds = label.getLocalBounds();
-    float centerX = x + getWidth() / 2.f;
-    float centerY = y + getHeight() / 2.f;
-    label.setOrigin({ textBounds.position.x + textBounds.size.x / 2.f, textBounds.position.y + textBounds.size.y / 2.f });
-    label.setPosition({ centerX, centerY });
+    centerLabel(x, y);
 }
 
 void Button::draw(sf::RenderWindow& window) const {
@@ -67,4 +62,22 @@ float Button::getWidth() const {
 
 float Button::getHeight() const {
     return usesImage ? backgroundSprite->getGlobalBounds().size.y : background.getSize().y;
+}
+
+float Button::getX() const
+{
+    return usesImage ? backgroundSprite->getGlobalBounds().position.x : background.getPosition().x;
+}
+float Button::getY() const
+{
+    return usesImage ? backgroundSprite->getGlobalBounds().position.y : background.getPosition().y;
+}
+
+void Button::centerLabel(float x, float y)
+{
+    sf::FloatRect textBounds = label.getLocalBounds();
+    float centerX = x + getWidth() / 2.f;
+    float centerY = y + getHeight() / 2.f;
+    label.setOrigin({ textBounds.position.x + textBounds.size.x / 2.f, textBounds.position.y + textBounds.size.y / 2.f });
+    label.setPosition({ centerX, centerY });
 }

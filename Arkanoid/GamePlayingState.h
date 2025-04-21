@@ -21,6 +21,9 @@ public:
     bool shouldExit() const;
     bool shouldPause() const;
     void reset();
+    float getTime() const;
+    GameHandler getGameHandler() const;
+    bool isOver() const;
 
 private:
     sf::RenderWindow& window;
@@ -35,6 +38,8 @@ private:
     Difficulty difficulty;
     float pointsCoefficient = 1;
     HUD hud;
+    float timePassed = 0.f;
+    bool over = false;
 
     void generateMap(std::vector<std::vector<int>> map);
 };

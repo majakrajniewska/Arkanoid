@@ -10,7 +10,7 @@ GameOverState::GameOverState(sf::RenderWindow& window, sf::Font& font, float tim
 	else header.setString("Haha Loser");
     header.setFillColor(sf::Color::White);
     header.setCharacterSize(40);
-    header.setPosition({ 300.f, 100.f });
+    setTextPosition(header, window.getSize().x / 2.f, 100.f);
 
     //time
     int minutes = static_cast<int>(time) / 60;
@@ -23,13 +23,13 @@ GameOverState::GameOverState(sf::RenderWindow& window, sf::Font& font, float tim
     timeText.setString(timeStream.str());
     timeText.setFillColor(sf::Color::White);
     timeText.setCharacterSize(30);
-    timeText.setPosition({ 200.f, 200.f });
+    setTextPosition(timeText, window.getSize().x / 2.f - 100.f, 200.f);
 
     //points
     pointsText.setString("Points: " + std::to_string(points));
     pointsText.setFillColor(sf::Color::White);
     pointsText.setCharacterSize(30);
-    pointsText.setPosition({ 400.f, 200.f });
+    setTextPosition(pointsText, window.getSize().x / 2.f + 100.f, 200.f);
 
     //create label and set position
 
@@ -104,4 +104,11 @@ void GameOverState::reset()
 {
     restartGame = false;
     goBackToMenu = false;
+}
+
+void GameOverState::setTextPosition(sf::Text& label, float x, float y)
+{
+    sf::FloatRect textBounds = label.getLocalBounds();
+    label.setOrigin({ textBounds.position.x + textBounds.size.x / 2.f, textBounds.position.y + textBounds.size.y / 2.f });
+    label.setPosition({ x, y });
 }

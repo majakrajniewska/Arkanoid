@@ -18,6 +18,7 @@ public:
     void reset();
 
 private:
+    void setTextPosition(sf::Text& label, float x, float y);
     sf::RenderWindow& window;
     sf::Font& font;
     const sf::Texture* buttonTexture;

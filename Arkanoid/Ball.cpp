@@ -10,7 +10,6 @@ Ball::Ball(float radius, unsigned int SCREEN_W, unsigned int SCREEN_H, BallSpeed
 	shape.setFillColor(sf::Color::Magenta);
 	startPosition = { SCREEN_W / 2.f, SCREEN_H - SCREEN_H / 3.f };
     shape.setPosition(startPosition);
-    initRandom();
     generateVelocity();
 }
 void Ball::bounceX()
@@ -38,17 +37,12 @@ void Ball::generateVelocity()
     velocity = {s*std::cos(alfaRadians), s*std::sin(alfaRadians)};
 }
 
-void Ball::initRandom()
-{
-    std::srand(static_cast<unsigned>(std::time(nullptr)));
-}
-
-void Ball::update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
+bool Ball::update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
     shape.move(velocity);
-    checkCollision(window, gh, bumper, blocks);
+    return checkCollision(window, gh, bumper, blocks);
 }
 
-void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
+bool Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
 	sf::FloatRect ballBounds = shape.getGlobalBounds();
 
 	// Check collision with window bounds
@@ -132,21 +126,19 @@ void Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
 
             if (block->getLives() <= 0) {
                 it = blocks.erase(it); // unique_ptr auto-deletes
+                //return true if block was killed
+                return true;
+
             }
             else {
                 ++it;
             }
-
-            if (blocks.empty()) {
-                //gh.win(window);
-            }
-
-            break; // One block per frame
         }
         else {
             ++it;
         }
     }
+    return false;
 }
 
 void Ball::draw(sf::RenderWindow& window) const {

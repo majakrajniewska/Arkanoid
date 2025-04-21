@@ -1,10 +1,12 @@
 #include "GamePlayingState.h"
+#include "HUD.h"
 
-GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, Difficulty difficulty, BallSpeed speed)
+GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, 
+    Difficulty difficulty, BallSpeed speed, sf::Font& font)
     : window(win), windowWidth(screenW), windowHeight(screenH),
     ball(25.f, screenW, screenH, speed),
     bumper(170.f, 30.f, 8.f, screenW, screenH),
-    gameHandler(3), difficulty(difficulty)
+    gameHandler(3), difficulty(difficulty), hud(HUD(font))
 {
     std::vector<std::vector<int>> mapSimple = {
         {1, 0, 2, 0, 1, 0, 2, 0},
@@ -26,10 +28,17 @@ GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, 
         {3, 1, 0, 2, 1, 3, 0, 2, 3, 0, 1, 0},
         {1, 2, 3, 0, 2, 3, 0, 3, 2, 0, 1, 2},
     };
+
     switch (difficulty) {
-    case Difficulty::Easy: generateMap(mapSimple); break;
-    case Difficulty::Medium: generateMap(mapNormal); break;
-    case Difficulty::Hard: generateMap(mapHard); break;
+    case Difficulty::Easy: generateMap(mapSimple); pointsCoefficient = 1; break;
+    case Difficulty::Medium: generateMap(mapNormal); pointsCoefficient = 2; break;
+    case Difficulty::Hard: generateMap(mapHard); pointsCoefficient = 3; break;
+    }
+
+    switch (speed) {
+    case BallSpeed::Slow: pointsCoefficient += 1; break;
+    case BallSpeed::Normal: pointsCoefficient += 2; break;
+    case BallSpeed::Fast: pointsCoefficient += 3; break;
     }
 
 }
@@ -39,18 +48,28 @@ void GamePlayingState::handleEvent(sf::Event& event) {
         window.close();
     else if (event.is<sf::Event::KeyPressed>() && sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Escape))
         pauseRequested = true;
+    hud.handleEvent(event, window);
+    if (hud.pausePressed()) {
+        pauseRequested = true;
+        hud.resetPause();
+    }
 }
 
 void GamePlayingState::update(float dt) {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::A))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::A) ||
+        sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Left))
         bumper.update(windowWidth, -1.f);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::D))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::D) ||
+        sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::Right))
         bumper.update(windowWidth, 1.f);
 
-    ball.update(window, gameHandler, bumper, blocks);
+    if(ball.update(window, gameHandler, bumper, blocks)) gameHandler.addPoints(pointsCoefficient);
+
+    timePassed += dt;
+    hud.update(timePassed, gameHandler.getPoints());
 
     if (gameHandler.checkLose() || blocks.empty()) {
-        exitRequested = true;
+        over = true;
     }
 }
 
@@ -58,6 +77,7 @@ void GamePlayingState::render(sf::RenderWindow& window) {
     window.clear();
     ball.draw(window);
     bumper.draw(window);
+    hud.draw(window);
     for (const auto& b : blocks)
         b->draw(window);
     window.display();
@@ -79,7 +99,7 @@ void GamePlayingState::generateMap(std::vector<std::vector<int>> map)
         for (int j = 0; j < map[0].size(); j++) {
             if (map[i][j] != 0) {
                 blocks.push_back(std::make_unique<Block>(blockSize, blockSize,
-                    j * blockSize, i * blockSize, map[i][j]));
+                    j * blockSize, i * blockSize + hud.getHeight(), map[i][j]));
             }
         }
     }
@@ -88,4 +108,19 @@ void GamePlayingState::generateMap(std::vector<std::vector<int>> map)
 void GamePlayingState::reset()
 {
     pauseRequested = false;
+}
+
+float GamePlayingState::getTime() const
+{
+    return timePassed;
+}
+
+GameHandler GamePlayingState::getGameHandler() const
+{
+    return gameHandler;
+}
+
+bool GamePlayingState::isOver() const
+{
+    return over;
 }

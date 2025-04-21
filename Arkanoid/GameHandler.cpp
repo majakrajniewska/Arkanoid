@@ -1,22 +1,12 @@
 #include "GameHandler.h"
 
-GameHandler::GameHandler(int lives) : lives(lives), points(0)
+GameHandler::GameHandler(int lives) : lives(lives), points(0.f)
 {
-}
-
-void GameHandler::win(sf::RenderWindow& window)
-{
-	window.close();
-}
-
-void GameHandler::lose(sf::RenderWindow& window)
-{
-	window.close();
 }
 
 bool GameHandler::checkLose()
 {
-	return lives == 0;
+	return lives == 0.f;
 }
 
 void GameHandler::decrementLives()
@@ -24,9 +14,14 @@ void GameHandler::decrementLives()
 	lives--;
 }
 
-int GameHandler::addPoints(int p)
+float GameHandler::addPoints(float p)
 {
 	return points+=p;
+}
+
+float GameHandler::getPoints()
+{
+	return points;
 }
 
 

@@ -4,8 +4,6 @@ Block::Block(float width, float height, float x, float y, int lives) : lives(liv
 {
 	shape.setSize({ width, height });
 	shape.setPosition({ x, y});
-	shape.setOutlineThickness(5);
-	shape.setOutlineColor(sf::Color::White);
 	updateColors(lives);
 }
 

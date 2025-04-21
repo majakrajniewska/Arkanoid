@@ -4,14 +4,13 @@ class GameHandler
 {
 public:
 	GameHandler(int lives);
-	void win(sf::RenderWindow& window);
-	void lose(sf::RenderWindow& window);
 	bool checkLose();
 	void decrementLives();
-	int addPoints(int p);
+	float addPoints(float p);
+	float getPoints();
 private:
 	int lives;
-	int points;
+	float points;
 
 };
 

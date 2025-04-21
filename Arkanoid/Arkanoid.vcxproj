@@ -141,8 +141,10 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="GameHandler.cpp" />
+    <ClCompile Include="GameOverState.cpp" />
     <ClCompile Include="GamePlayingState.cpp" />
     <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="HUD.cpp" />
     <ClCompile Include="MenuState.cpp" />
     <ClCompile Include="PauseState.cpp" />
     <ClCompile Include="StateManager.cpp" />
@@ -155,8 +157,10 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="Difficulty.h" />
     <ClInclude Include="GameHandler.h" />
+    <ClInclude Include="GameOverState.h" />
     <ClInclude Include="GamePlayingState.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="HUD.h" />
     <ClInclude Include="MenuState.h" />
     <ClInclude Include="PauseState.h" />
     <ClInclude Include="StateManager.h" />

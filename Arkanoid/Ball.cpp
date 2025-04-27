@@ -8,7 +8,7 @@
 Ball::Ball(float radius, unsigned int SCREEN_W, unsigned int SCREEN_H, BallSpeed speed) : speed(speed) {
 	shape.setRadius(radius);
 	shape.setFillColor(sf::Color::Magenta);
-	startPosition = { SCREEN_W / 2.f, SCREEN_H - SCREEN_H / 3.f };
+	startPosition = { SCREEN_W / 2.f - radius, SCREEN_H - SCREEN_H / 6.f };
     shape.setPosition(startPosition);
     generateVelocity();
 }

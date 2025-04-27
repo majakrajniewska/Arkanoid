@@ -98,7 +98,6 @@ int main() {
     StateManager manager;
     bool restart = false;
 
-    //add menu to the manager - stack
     manager.push(std::make_unique<MenuState>(window, font));
 
     while (window.isOpen()) {

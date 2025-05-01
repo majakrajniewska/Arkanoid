@@ -7,7 +7,7 @@ class HUD {
 public:
     HUD(sf::Font& font, const sf::Texture* buttonTexture = nullptr);
 
-    void update(float elapsedTime, int currentPoints);
+    void update(float elapsedTime, int currentPoints, int currentLives);
     void draw(sf::RenderWindow& window);
 
     void handleEvent(const sf::Event& event, const sf::RenderWindow& window);
@@ -19,6 +19,7 @@ public:
 private:
     sf::Text timeText;
     sf::Text pointsText;
+    sf::Text livesText;
     std::unique_ptr<Button> pauseButton;
 
     bool pauseRequested = false;

@@ -4,7 +4,7 @@ Bumper::Bumper(float width, float height, float speed, unsigned int SCREEN_W, un
 	: speed(speed){
 	shape.setSize({ width, height });
 	shape.setFillColor(sf::Color::Cyan);
-	shape.setPosition({ SCREEN_W / 2.f, SCREEN_H - SCREEN_H / 5.f });
+	shape.setPosition({ SCREEN_W / 2.f - width / 2.f, SCREEN_H - SCREEN_H / 8.f });
 	moving = false;
 }
 

@@ -24,4 +24,9 @@ float GameHandler::getPoints()
 	return points;
 }
 
+float GameHandler::getLives()
+{
+	return lives;
+}
+
 

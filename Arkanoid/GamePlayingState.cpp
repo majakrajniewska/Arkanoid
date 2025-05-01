@@ -66,7 +66,7 @@ void GamePlayingState::update(float dt) {
     if(ball.update(window, gameHandler, bumper, blocks)) gameHandler.addPoints(pointsCoefficient);
 
     timePassed += dt;
-    hud.update(timePassed, gameHandler.getPoints());
+    hud.update(timePassed, gameHandler.getPoints(), gameHandler.getLives());
 
     if (gameHandler.checkLose() || blocks.empty()) {
         over = true;

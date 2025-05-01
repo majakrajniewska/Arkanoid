@@ -11,8 +11,8 @@ MenuState::MenuState(sf::RenderWindow& window, sf::Font& font, const sf::Texture
             return std::make_unique<Button>(text, sf::Color(100, 100, 200), font, 300, 60);
         };
 
-    buttons.push_back(createButton("Map: Medium"));
-    buttons.push_back(createButton("Ball: Normal"));
+    buttons.push_back(createButton("Map: Easy"));
+    buttons.push_back(createButton("Ball: Slow"));
     buttons.push_back(createButton("Play"));
     buttons.push_back(createButton("Exit"));
 
@@ -24,18 +24,19 @@ MenuState::MenuState(sf::RenderWindow& window, sf::Font& font, const sf::Texture
 
 void MenuState::handleEvent(sf::Event& event) {
     if (event.is<sf::Event::MouseButtonPressed>()) {
-        sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
+        sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
 
-        if (buttons[0]->isHovered(mousePos)) { // Difficulty
+        if (buttons[0]->isHovered(worldPos)) { // Difficulty
             currentDifficulty = static_cast<Difficulty>((static_cast<int>(currentDifficulty) + 1) % 3);
         }
-        else if (buttons[1]->isHovered(mousePos)) { // Speed
+        else if (buttons[1]->isHovered(worldPos)) { // Speed
             currentSpeed = static_cast<BallSpeed>((static_cast<int>(currentSpeed) + 1) % 3);
         }
-        else if (buttons[2]->isHovered(mousePos)) { // Play
+        else if (buttons[2]->isHovered(worldPos)) { // Play
             startGame = true;
         }
-        else if (buttons[3]->isHovered(mousePos)) { // Exit
+        else if (buttons[3]->isHovered(worldPos)) { // Exit
             exitRequested = true;
         }
 

@@ -7,6 +7,7 @@
 
 class StateManager {
 public:
+    StateManager(unsigned int windowSize = 900);
     void push(std::unique_ptr<GameState> state);
     void pop();
     GameState* top();
@@ -17,4 +18,7 @@ public:
 
 private:
     std::stack<std::unique_ptr<GameState>> states;
+    sf::View view;
+    unsigned int windowSize;
+    void updateView(sf::RenderWindow& window);
 };

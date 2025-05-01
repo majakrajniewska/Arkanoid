@@ -1,38 +1,52 @@
 #include "GameOverState.h"
 
-GameOverState::GameOverState(sf::RenderWindow& window, sf::Font& font, float time, int points, 
+GameOverState::GameOverState(sf::RenderWindow& window, sf::Font& font, float time, int points,
     bool win, const sf::Texture* buttonTexture)
-	: window(window), font(font), buttonTexture(buttonTexture), time(time), points(points), win(win),
+    : window(window), font(font), buttonTexture(buttonTexture), time(time), points(points), win(win),
     header(font), timeText(font), pointsText(font)
 {
-    //header
-	if (win) header.setString("Well done");
-	else header.setString("Haha Loser");
-    header.setFillColor(sf::Color::White);
-    header.setCharacterSize(40);
-    setTextPosition(header, window.getSize().x / 2.f, 100.f);
+    sf::Vector2f viewCenter = window.getView().getCenter();
+    float viewWidth = window.getView().getSize().x;
+    float viewHeight = window.getView().getSize().y;
 
-    //time
+    //Header
+    header.setString(win ? "Well done" : "Haha Loser");
+    header.setCharacterSize(40);
+    header.setFillColor(sf::Color::White);
+    sf::FloatRect headerBounds = header.getLocalBounds();
+    header.setOrigin({ headerBounds.size.x / 2.f, headerBounds.size.y / 2.f });
+    header.setPosition({ viewCenter.x, viewCenter.y - viewHeight / 3.f });
+
+    //Time Text
     int minutes = static_cast<int>(time) / 60;
     int seconds = static_cast<int>(time) % 60;
-
     std::ostringstream timeStream;
     timeStream << "Time: " << std::setw(2) << std::setfill('0') << minutes
         << ":" << std::setw(2) << std::setfill('0') << seconds;
 
     timeText.setString(timeStream.str());
-    timeText.setFillColor(sf::Color::White);
     timeText.setCharacterSize(30);
-    setTextPosition(timeText, window.getSize().x / 2.f - 100.f, 200.f);
+    timeText.setFillColor(sf::Color::White);
 
-    //points
+    //Points Text
     pointsText.setString("Points: " + std::to_string(points));
-    pointsText.setFillColor(sf::Color::White);
     pointsText.setCharacterSize(30);
-    setTextPosition(pointsText, window.getSize().x / 2.f + 100.f, 200.f);
+    pointsText.setFillColor(sf::Color::White);
 
-    //create label and set position
+    //Position Time & Points
+    float spacing = 50.f;
+    sf::FloatRect timeBounds = timeText.getLocalBounds();
+    sf::FloatRect pointsBounds = pointsText.getLocalBounds();
 
+    float totalWidth = timeBounds.size.x + pointsBounds.size.x + spacing;
+
+    timeText.setOrigin({timeBounds.position.x, timeBounds.position.y});
+    pointsText.setOrigin({ pointsBounds.position.x, pointsBounds.position.y});
+
+    timeText.setPosition({ viewCenter.x - totalWidth / 2.f, viewCenter.y - viewHeight / 4.f });
+    pointsText.setPosition({ timeText.getPosition().x + timeBounds.size.x + spacing, timeText.getPosition().y });
+
+    //Buttons
     auto createButton = [&](const std::string& text) {
         if (buttonTexture)
             return std::make_unique<Button>(text, *buttonTexture, font, 300, 60);
@@ -44,24 +58,28 @@ GameOverState::GameOverState(sf::RenderWindow& window, sf::Font& font, float tim
     buttons.push_back(createButton("Menu"));
     buttons.push_back(createButton("Exit"));
 
-    float startY = 300.f;
+    float buttonStartY = viewCenter.y + 20.f;
     for (size_t i = 0; i < buttons.size(); ++i) {
-        buttons[i]->setPosition(window.getSize().x / 2.f - buttons[i]->getWidth() / 2.f, startY + i * 80.f);
+        buttons[i]->setPosition(
+            viewCenter.x - buttons[i]->getWidth() / 2.f,
+            buttonStartY + i * 80.f
+        );
     }
 }
 
 void GameOverState::handleEvent(sf::Event& event)
 {
     if (event.is<sf::Event::MouseButtonPressed>()) {
-        sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
+        sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
 
-        if (buttons[0]->isHovered(mousePos)) { // restart
+        if (buttons[0]->isHovered(worldPos)) { // restart
             restartGame = true;
         }
-        else if (buttons[1]->isHovered(mousePos)) { // Menu
+        else if (buttons[1]->isHovered(worldPos)) { // Menu
             goBackToMenu = true;
         }
-        else if (buttons[2]->isHovered(mousePos)) { // Exit
+        else if (buttons[2]->isHovered(worldPos)) { // Exit
             exitRequested = true;
         }
     }

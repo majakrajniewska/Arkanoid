@@ -42,9 +42,10 @@ void HUD::draw(sf::RenderWindow& window) {
 
 void HUD::handleEvent(const sf::Event& event, const sf::RenderWindow& window) {
     if (event.is<sf::Event::MouseButtonPressed>()) {
-        sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
+        sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
 
-        if (pauseButton->isHovered(mousePos)) {
+        if (pauseButton->isHovered(worldPos)) {
             pauseRequested = true;
         }
     }

@@ -14,24 +14,26 @@ PauseState::PauseState(sf::RenderWindow& window, sf::Font& font, const sf::Textu
     buttons.push_back(createButton("Menu"));
     buttons.push_back(createButton("Exit"));
 
-    float startY = 200.f;
+    sf::Vector2f viewCenter = window.getView().getCenter();
+    float startY = viewCenter.y - viewCenter.y / 4.f;
     for (size_t i = 0; i < buttons.size(); ++i) {
-        buttons[i]->setPosition(window.getSize().x / 2.f - buttons[i]->getWidth() / 2.f, startY + i * 80.f);
+        buttons[i]->setPosition(viewCenter.x - buttons[i]->getWidth() / 2.f, startY + i * 80.f);
     }
 }
 
 void PauseState::handleEvent(sf::Event& event)
 {
     if (event.is<sf::Event::MouseButtonPressed>()) {
-        sf::Vector2f mousePos = static_cast<sf::Vector2f>(sf::Mouse::getPosition(window));
+        sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+        sf::Vector2f worldPos = window.mapPixelToCoords(pixelPos);
 
-        if (buttons[0]->isHovered(mousePos)) { // Resume
+        if (buttons[0]->isHovered(worldPos)) { // Resume
             resumeRequested = true;
         }
-        else if (buttons[1]->isHovered(mousePos)) { // Menu
+        else if (buttons[1]->isHovered(worldPos)) { // Menu
             menuRequested = true;
         }
-        else if (buttons[2]->isHovered(mousePos)) { // Exit
+        else if (buttons[2]->isHovered(worldPos)) { // Exit
             exitRequested = true;
         }
     }

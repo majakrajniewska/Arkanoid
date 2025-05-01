@@ -18,6 +18,8 @@ public:
     void handleEvent(sf::Event& event) override;
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
+    sf::RenderWindow* getWindow() override { return &window; }
+
     bool shouldExit() const;
     bool shouldPause() const;
     void reset();

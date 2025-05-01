@@ -7,6 +7,8 @@
 #include "PauseState.h"
 #include "GameOverState.h"
 
+const unsigned int GAME_SIZE = 900;
+
 void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font, 
     Difficulty difficulty, BallSpeed ballSpeed, bool& restart) {
     manager.push(std::make_unique<GamePlayingState>(window, 900, 900, difficulty, ballSpeed, font));
@@ -20,6 +22,7 @@ void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font,
         float dt = clock.restart().asSeconds();
         manager.update(dt);
 
+        //Game Playing State
         if (auto* game = dynamic_cast<GamePlayingState*>(manager.top())) {
             if (game->shouldPause()) {
                 game->reset();
@@ -37,6 +40,7 @@ void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font,
             }
         }
 
+        //Pause State
         if (auto* pause = dynamic_cast<PauseState*>(manager.top())) {
             if (pause->shouldStartGame()) {
                 manager.pop(); // resume: pop pause state
@@ -55,7 +59,7 @@ void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font,
             }
         }
 
-        //ADD GAME OVER STATE HANDLING
+        //Game Over State
         if (auto* over = dynamic_cast<GameOverState*>(manager.top())) {
             if (over->shouldRestartGame()) {
                 manager.pop(); // pop GameOverState
@@ -95,7 +99,7 @@ int main() {
     sf::Texture buttonTex;
     //buttonTex.loadFromFile("path/to/button-image.png"); // optional
 
-    StateManager manager;
+    StateManager manager(GAME_SIZE);
     bool restart = false;
 
     manager.push(std::make_unique<MenuState>(window, font));

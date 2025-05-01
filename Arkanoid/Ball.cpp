@@ -44,15 +44,20 @@ bool Ball::update(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumpe
 
 bool Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumper& bumper, std::vector<std::unique_ptr<Block>>& blocks) {
 	sf::FloatRect ballBounds = shape.getGlobalBounds();
+    sf::View view = window.getView();
+    float left = view.getCenter().x - view.getSize().x / 2.f;
+    float right = view.getCenter().x + view.getSize().x / 2.f;
+    float top = view.getCenter().y - view.getSize().y / 2.f;
+    float bottom = view.getCenter().y + view.getSize().y / 2.f;
 
 	// Check collision with window bounds
-	if (ballBounds.position.x <= 0 || ballBounds.position.x + ballBounds.size.x >= window.getSize().x) {
+	if (ballBounds.position.x <= left || ballBounds.position.x + ballBounds.size.x >= right) {
 		bounceX();
 	}
-	if (ballBounds.position.y <= 0) {
+	if (ballBounds.position.y <= top) {
 		bounceY();
 	}
-    if (ballBounds.position.y + ballBounds.size.y >= window.getSize().y) {
+    if (ballBounds.position.y + ballBounds.size.y >= bottom) {
         gh.decrementLives();
         reset();
     }

@@ -11,6 +11,7 @@ public:
     void handleEvent(sf::Event& event) override;
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
+    sf::RenderWindow* getWindow() override { return &window; }
 
     bool shouldRestartGame() const;
     bool shouldGoBackToMenu() const;

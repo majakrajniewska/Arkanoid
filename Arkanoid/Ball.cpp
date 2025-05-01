@@ -136,7 +136,7 @@ bool Ball::checkCollision(sf::RenderWindow& window, GameHandler& gh, const Bumpe
 
             }
             else {
-                ++it;
+                return false;
             }
         }
         else {

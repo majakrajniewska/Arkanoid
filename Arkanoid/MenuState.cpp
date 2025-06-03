@@ -57,6 +57,11 @@ void MenuState::render(sf::RenderWindow& window) {
     window.display();
 }
 
+bool MenuState::handleManager(StateManager& manager, bool& restart, bool& closeWindow)
+{
+    return false;
+}
+
 bool MenuState::shouldStartGame() const {
     return startGame;
 }

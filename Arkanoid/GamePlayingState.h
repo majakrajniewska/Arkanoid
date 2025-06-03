@@ -10,6 +10,9 @@
 #include "Difficulty.h"
 #include "BallSpeed.h"
 #include "HUD.h"
+#include "StateManager.h"
+#include "PauseState.h"
+#include "GameOverState.h"
 
 class GamePlayingState : public GameState {
 public:
@@ -19,6 +22,7 @@ public:
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     sf::RenderWindow* getWindow() override { return &window; }
+    bool handleManager(StateManager& manager, bool& restart, bool& closeWindow) override;
 
     bool shouldExit() const;
     bool shouldPause() const;
@@ -42,6 +46,7 @@ private:
     HUD hud;
     float timePassed = 0.f;
     bool over = false;
+    sf::Font font;
 
     void generateMap(std::vector<std::vector<int>> map);
 };

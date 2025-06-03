@@ -103,6 +103,28 @@ void GameOverState::render(sf::RenderWindow& window) {
     window.display();
 }
 
+bool GameOverState::handleManager(StateManager& manager, bool& restart, bool& closeWindow)
+{
+    if (shouldRestartGame()) {
+        manager.pop(); // pop GameOverState
+        manager.pop(); // pop GamePlayingState
+        restart = true;
+        return true;
+    }
+    else if (shouldGoBackToMenu()) {
+        manager.pop(); // pop GameOverState
+        manager.pop(); // pop GamePlayingState
+        return true;
+    }
+    else if (shouldExit()) {
+        manager.pop(); // pop GameOverState
+        manager.pop(); // pop GamePlayingState
+        manager.pop(); // pop menu
+        closeWindow = true;
+        return true;
+    }
+}
+
 bool GameOverState::shouldRestartGame() const
 {
     return restartGame;

@@ -2,6 +2,7 @@
 #include "GameState.h"
 #include "Button.h"
 #include <SFML/Graphics.hpp>
+#include "StateManager.h"
 
 class PauseState : public GameState {
 public:
@@ -11,6 +12,7 @@ public:
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     sf::RenderWindow* getWindow() override { return &window; }
+    bool handleManager(StateManager& manager, bool& restart, bool& closeWindow) override;
 
     bool shouldStartGame() const;
     bool shouldGoBackToMenu() const;

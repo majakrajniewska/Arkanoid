@@ -1,6 +1,8 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+class StateManager;
+
 class GameState {
 public:
     virtual ~GameState() = default;
@@ -10,5 +12,7 @@ public:
     virtual void render(sf::RenderWindow& window) = 0;
     virtual bool isTransparent() const { return false; }
     virtual sf::RenderWindow* getWindow() = 0;
+
+    virtual bool handleManager(StateManager& manager, bool& restart, bool& closeWindow) { return false; }
 };
 

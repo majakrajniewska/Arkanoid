@@ -14,6 +14,8 @@ void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font,
     manager.push(std::make_unique<GamePlayingState>(window, 900, 900, difficulty, ballSpeed, font));
     sf::Clock clock;
 
+    bool closeWindow = false;
+
     while (window.isOpen()) {
         while (auto event = window.pollEvent()) {
             manager.handleEvent(*event);
@@ -22,63 +24,12 @@ void runGame(StateManager& manager, sf::RenderWindow& window, sf::Font& font,
         float dt = clock.restart().asSeconds();
         manager.update(dt);
 
-        //Game Playing State
-        if (auto* game = dynamic_cast<GamePlayingState*>(manager.top())) {
-            if (game->shouldPause()) {
-                game->reset();
-                manager.push(std::make_unique<PauseState>(window, font));
-                continue; // wait for pause state to handle events
+        if (manager.top()->handleManager(manager, restart, closeWindow)) {
+            if (closeWindow) { 
+                window.close(); 
+                return;
             }
-            if (game->shouldExit()) {
-                manager.pop(); // pop GamePlayingState
-                break;
-            }
-            if (game->isOver()) {
-                manager.push(std::make_unique<GameOverState>(window, font, game->getTime(), 
-                    game->getGameHandler().getPoints(), !game->getGameHandler().checkLose()));
-                continue; // wait for gameOver state to handle events
-            }
-        }
-
-        //Pause State
-        if (auto* pause = dynamic_cast<PauseState*>(manager.top())) {
-            if (pause->shouldStartGame()) {
-                manager.pop(); // resume: pop pause state
-            }
-            else if (pause->shouldGoBackToMenu()) {
-                manager.pop(); // pop PauseState
-                manager.pop(); // pop GamePlayingState
-                break;
-            }
-            else if (pause->shouldExit()) {
-                manager.pop(); // pop PauseState
-                manager.pop(); // pop GamePlayingState
-                manager.pop(); // pop menu
-                window.close();
-                break;
-            }
-        }
-
-        //Game Over State
-        if (auto* over = dynamic_cast<GameOverState*>(manager.top())) {
-            if (over->shouldRestartGame()) {
-                manager.pop(); // pop GameOverState
-                manager.pop(); // pop GamePlayingState
-                restart = true;
-                break;
-            }
-            else if (over->shouldGoBackToMenu()) {
-                manager.pop(); // pop GameOverState
-                manager.pop(); // pop GamePlayingState
-                break;
-            }
-            else if (over->shouldExit()) {
-                manager.pop(); // pop GameOverState
-                manager.pop(); // pop GamePlayingState
-                manager.pop(); // pop menu
-                window.close();
-                break;
-            }
+            break;
         }
 
         manager.render(window);

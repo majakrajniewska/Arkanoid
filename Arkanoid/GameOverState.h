@@ -2,6 +2,7 @@
 #include "GameState.h"
 #include "Button.h"
 #include "GameHandler.h"
+#include "StateManager.h"
 
 class GameOverState : public GameState {
 public:
@@ -12,6 +13,7 @@ public:
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     sf::RenderWindow* getWindow() override { return &window; }
+    bool handleManager(StateManager& manager, bool& restart, bool& closeWindow) override;
 
     bool shouldRestartGame() const;
     bool shouldGoBackToMenu() const;

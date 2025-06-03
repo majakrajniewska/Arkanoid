@@ -54,6 +54,26 @@ void PauseState::render(sf::RenderWindow& window) {
     window.display();
 }
 
+bool PauseState::handleManager(StateManager& manager, bool& restart, bool& closeWindow)
+{
+    if (shouldStartGame()) {
+        manager.pop(); // resume: pop pause state
+        return false;
+    }
+    else if (shouldGoBackToMenu()) {
+        manager.pop(); // pop PauseState
+        manager.pop(); // pop GamePlayingState
+        return true;
+    }
+    else if (shouldExit()) {
+        manager.pop(); // pop PauseState
+        manager.pop(); // pop GamePlayingState
+        manager.pop(); // pop menu
+        closeWindow = true;
+        return true;
+    }
+}
+
 bool PauseState::shouldStartGame() const
 {
     return resumeRequested;

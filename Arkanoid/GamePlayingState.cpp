@@ -1,12 +1,11 @@
 #include "GamePlayingState.h"
-#include "HUD.h"
 
 GamePlayingState::GamePlayingState(sf::RenderWindow& win, unsigned int screenW, unsigned int screenH, 
     Difficulty difficulty, BallSpeed speed, sf::Font& font)
     : window(win), windowWidth(screenW), windowHeight(screenH),
     ball(25.f, screenW, screenH, speed),
     bumper(170.f, 30.f, 8.f, screenW, screenH),
-    gameHandler(3), difficulty(difficulty), hud(HUD(font))
+    gameHandler(3), difficulty(difficulty), hud(HUD(font)), font(font)
 {
     std::vector<std::vector<int>> mapSimple = {
         {1, 0, 2, 0, 1, 0, 2, 0},
@@ -81,6 +80,24 @@ void GamePlayingState::render(sf::RenderWindow& window) {
     for (const auto& b : blocks)
         b->draw(window);
     window.display();
+}
+
+bool GamePlayingState::handleManager(StateManager& manager, bool& restart, bool& closeWindow)
+{
+    if (shouldPause()) {
+        reset();
+        manager.push(std::make_unique<PauseState>(window, font));
+        return false;
+    }
+    if (shouldExit()) {
+        manager.pop(); 
+        return true;
+    }
+    if (isOver()) {
+        manager.push(std::make_unique<GameOverState>(window, font, getTime(),
+            getGameHandler().getPoints(), !getGameHandler().checkLose()));
+        return false;
+    }
 }
 
 bool GamePlayingState::shouldExit() const {
